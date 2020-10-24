@@ -89,49 +89,50 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    found_goal = False
-    actions = util.Stack()
+    # found_goal = False
+    # actions = util.Stack()
+    # visited_nodes = []
+    #
+    # def dfsRecursion(problem, state):
+    #     nonlocal found_goal
+    #     visited_nodes.append(state)
+    #     if problem.isGoalState(state):
+    #         found_goal = True
+    #         return
+    #     successors = problem.getSuccessors(state)
+    #     for node in successors:
+    #         if node[0] in visited_nodes:
+    #             continue
+    #         actions.push(node[1])
+    #         dfsRecursion(problem, node[0])
+    #         if found_goal:
+    #             return
+    #     actions.pop()
+    #
+    # dfsRecursion(problem, problem.getStartState())
+    # return actions.list
     visited_nodes = []
-
-    def dfsRecursion(problem, state):
-        nonlocal found_goal
+    frontier = util.Stack()
+    frontier.push((
+        problem.getStartState(),
+        [],
+        0
+    ))
+    while not frontier.isEmpty():
+        state, actions, cost = frontier.pop()
         visited_nodes.append(state)
         if problem.isGoalState(state):
-            found_goal = True
-            return
+            return actions
         successors = problem.getSuccessors(state)
         for node in successors:
-            if node[0] in visited_nodes:
-                continue
-            actions.push(node[1])
-            dfsRecursion(problem, node[0])
-            if found_goal:
-                return
-        actions.pop()
-
-    dfsRecursion(problem, problem.getStartState())
-    return actions.list
-
-    frontier = util.Stack()
-    frontier.push({
-        pos: problem.getStartState(),
-        path: None,
-        cost: None
-    })
-    while not frontier.isEmpty():
-        current_state, actions, cost = frontier.pop()
-        visited_nodes.append(state)
-        if problem.isGoalState(state):
-            found_goal = True
-            break
-        successors = problem.getSuccessors(current_state)
-        for node in successors:
-            if node not in visited_nodes:
-                frontier.push({
-                    pos: node[0],
-                    path: actions + node[1],
-                    cost: None
-                })
+            if node[0] not in visited_nodes:
+                actions.append(node[1])
+                frontier.push((
+                    node[0],
+                    actions.copy(),
+                    cost + node[2]
+                ))
+                actions.pop()
 
 
 def breadthFirstSearch(problem):
