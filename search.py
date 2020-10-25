@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -89,37 +89,22 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    # found_goal = False
-    # actions = util.Stack()
-    # visited_nodes = []
-    #
-    # def dfsRecursion(problem, state):
-    #     nonlocal found_goal
-    #     visited_nodes.append(state)
-    #     if problem.isGoalState(state):
-    #         found_goal = True
-    #         return
-    #     successors = problem.getSuccessors(state)
-    #     for node in successors:
-    #         if node[0] in visited_nodes:
-    #             continue
-    #         actions.push(node[1])
-    #         dfsRecursion(problem, node[0])
-    #         if found_goal:
-    #             return
-    #     actions.pop()
-    #
-    # dfsRecursion(problem, problem.getStartState())
-    # return actions.list
-    visited_nodes = []
     frontier = util.Stack()
-    frontier.push((
-        problem.getStartState(),
-        [],
-        0
-    ))
+    return search(frontier, problem)
+
+
+def search(frontier, problem):
+    visited_nodes = []
+    frontier.push({
+        "pos": problem.getStartState(),
+        "actions": [],
+        "cost": 0,
+    })
     while not frontier.isEmpty():
-        state, actions, cost = frontier.pop()
+        cur_node = frontier.pop()
+        state = cur_node['pos']
+        actions = cur_node['actions']
+        cost = cur_node['cost']
         visited_nodes.append(state)
         if problem.isGoalState(state):
             return actions
@@ -127,24 +112,28 @@ def depthFirstSearch(problem):
         for node in successors:
             if node[0] not in visited_nodes:
                 actions.append(node[1])
-                frontier.push((
-                    node[0],
-                    actions.copy(),
-                    cost + node[2]
-                ))
+                frontier.push({
+                    "pos": node[0],
+                    "actions": actions.copy(),
+                    "cost": cost + node[2]
+                })
                 actions.pop()
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.Queue()
+    return search(frontier, problem)
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def costFunction(node):
+        return node['cost']
+    frontier = util.PriorityQueueWithFunction(costFunction)
+    return search(frontier, problem)
 
 
 def nullHeuristic(state, problem=None):
@@ -158,7 +147,10 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def costFunction(node):
+        return node['cost'] + heuristic(node['pos'], problem)
+    frontier = util.PriorityQueueWithFunction(costFunction)
+    return search(frontier, problem)
 
 
 # Abbreviations
