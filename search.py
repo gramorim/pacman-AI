@@ -105,7 +105,6 @@ def search(frontier, problem):
         state = cur_node['pos']
         actions = cur_node['actions']
         cost = cur_node['cost']
-        visited_nodes.append(state)
         if problem.isGoalState(state):
             return actions
         successors = problem.getSuccessors(state)
@@ -118,6 +117,7 @@ def search(frontier, problem):
                     "cost": cost + node[2]
                 })
                 actions.pop()
+                visited_nodes.append(node[0])
 
 
 def breadthFirstSearch(problem):
